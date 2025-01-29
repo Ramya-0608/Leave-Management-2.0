@@ -233,9 +233,9 @@ public class ManageStaff extends JFrame {
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 tableModel.addRow(new Object[]{
-                    rs.getString("staffname"),
-                    rs.getString("staffid"),
-                    rs.getString("class")
+                    rs.getString("name"),
+                    rs.getString("staff_id"),
+                    rs.getString("clas_id")
                 });
             }
         } catch (SQLException e) {
@@ -249,7 +249,7 @@ public class ManageStaff extends JFrame {
             JOptionPane.showMessageDialog(this, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        String query = "INSERT INTO staff (staffname, staffid, class) VALUES (?, ?, ?)";
+        String query = "INSERT INTO staff (name, staff_id, clas_id) VALUES (?, ?, ?)";
         try (Connection con = DBConnect.getConnection();
              PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setString(1, name);
@@ -265,7 +265,7 @@ public class ManageStaff extends JFrame {
     }
 
     private boolean deleteStaff(String staffId) {
-        String query = "DELETE FROM staff WHERE staffid = ?";
+        String query = "DELETE FROM staff WHERE staff_id = ?";
         try (Connection con = DBConnect.getConnection();
              PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setString(1, staffId);
@@ -283,7 +283,7 @@ public class ManageStaff extends JFrame {
             JOptionPane.showMessageDialog(this, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        String query = "UPDATE staff SET staffname = ?, class = ? WHERE staffid = ?";
+        String query = "UPDATE staff SET name = ?, clas_id = ? WHERE staff_id = ?";
         try (Connection con = DBConnect.getConnection();
              PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setString(1, newName);
@@ -298,7 +298,7 @@ public class ManageStaff extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        new ManageStaff();
-    }
+//    public static void main(String[] args) {
+//        new ManageStaff();
+//    }
 }

@@ -1,21 +1,22 @@
 package admin;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.sql.*;
+import java.util.*;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import database.DBConnect;
 
 public class ManageStudent extends JFrame {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	JPanel buttonPanel, contentPanel;
+    JPanel buttonPanel, contentPanel;
     JButton addButton, updateButton, deleteButton, viewButton;
     JTable studentTable;
     DefaultTableModel tableModel;
+    JComboBox<String> staffNameField,updateStaffNameField;
+    ArrayList<String> stafflist=new ArrayList<>();
 
     public ManageStudent() {
         // Frame setup
@@ -42,7 +43,7 @@ public class ManageStudent extends JFrame {
 
         // View Panel
         JPanel viewPanel = new JPanel(new BorderLayout());
-        tableModel = new DefaultTableModel(new Object[] { "Student ID", "Student Name", "Class", "Staff Name" }, 0);
+        tableModel = new DefaultTableModel(new Object[] { "Student ID", "Student Name", "Staff Id", "No.of leaves" }, 0);
         studentTable = new JTable(tableModel);
         viewPanel.add(new JScrollPane(studentTable), BorderLayout.CENTER);
 
@@ -53,20 +54,22 @@ public class ManageStudent extends JFrame {
         JTextField studentIdField = new JTextField();
         JLabel studentNameLabel = new JLabel("Enter Student Name:");
         JTextField studentNameField = new JTextField();
-        JLabel classLabel = new JLabel("Enter Staff:");
-        JComboBox<String> classField = new JComboBox<>();
+        JLabel staffnameLable = new JLabel("Enter Staff Name:");
+        staffnamelist();
+        staffNameField = new JComboBox<>(new Vector<>(stafflist));
+
         JButton addSubmitButton = new JButton("Add Student");
 
         studentIdField.setMaximumSize(new Dimension(300, 30));
         studentNameField.setMaximumSize(new Dimension(300, 30));
-        classField.setMaximumSize(new Dimension(300, 30));
+        staffNameField.setMaximumSize(new Dimension(300, 30));
         
         studentIdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         studentIdField.setAlignmentX(Component.CENTER_ALIGNMENT);
         studentNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         studentNameField.setAlignmentX(Component.CENTER_ALIGNMENT);
-        classLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        classField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        staffnameLable.setAlignmentX(Component.CENTER_ALIGNMENT);
+       staffNameField.setAlignmentX(Component.CENTER_ALIGNMENT);
         addSubmitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addPanel.add(Box.createVerticalGlue());
         addPanel.add(studentIdLabel);
@@ -77,9 +80,9 @@ public class ManageStudent extends JFrame {
         addPanel.add(Box.createVerticalStrut(10));
         addPanel.add(studentNameField);
         addPanel.add(Box.createVerticalStrut(10));
-        addPanel.add(classLabel);
+        addPanel.add(staffnameLable);
         addPanel.add(Box.createVerticalStrut(10));
-        addPanel.add(classField);
+        addPanel.add(staffNameField);
         addPanel.add(Box.createVerticalStrut(20));
         addPanel.add(addSubmitButton);
         addPanel.add(Box.createVerticalGlue());
@@ -110,19 +113,19 @@ public class ManageStudent extends JFrame {
         JTextField updateIdField = new JTextField();
         JLabel updateNameLabel = new JLabel("Enter New Student Name:");
         JTextField updateNameField = new JTextField();
-        JLabel updateClassLabel = new JLabel("Enter New Class:");
-        JComboBox<String> updateClassField = new JComboBox<>();
+        JLabel updatestaffnameLable = new JLabel("Enter New Staffid:");
+        updateStaffNameField=new JComboBox<>(new Vector<>(stafflist));
         JButton updateSubmitButton = new JButton("Update Student");
 
         updateIdField.setMaximumSize(new Dimension(300, 30));
         updateNameField.setMaximumSize(new Dimension(300, 30));
-        updateClassField.setMaximumSize(new Dimension(300, 30));
+        updateStaffNameField.setMaximumSize(new Dimension(300, 30));
         updateIdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         updateIdField.setAlignmentX(Component.CENTER_ALIGNMENT);
         updateNameField.setAlignmentX(Component.CENTER_ALIGNMENT);
         updateNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        updateClassLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        updateClassField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        updatestaffnameLable.setAlignmentX(Component.CENTER_ALIGNMENT);
+        updateStaffNameField.setAlignmentX(Component.CENTER_ALIGNMENT);
         updateSubmitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         updatePanel.add(Box.createVerticalGlue());
         updatePanel.add(updateIdLabel);
@@ -133,9 +136,9 @@ public class ManageStudent extends JFrame {
         updatePanel.add(Box.createVerticalStrut(10));
         updatePanel.add(updateNameField);
         updatePanel.add(Box.createVerticalStrut(10));
-        updatePanel.add(updateClassLabel);
+        updatePanel.add(updatestaffnameLable);
         updatePanel.add(Box.createVerticalStrut(10));
-        updatePanel.add(updateClassField);
+        updatePanel.add(updateStaffNameField);
         updatePanel.add(Box.createVerticalStrut(20));
         updatePanel.add(updateSubmitButton);
         updatePanel.add(Box.createVerticalGlue());
@@ -166,9 +169,9 @@ public class ManageStudent extends JFrame {
         addSubmitButton.addActionListener(e -> {
             String studentId = studentIdField.getText().trim();
             String studentName = studentNameField.getText().trim();
-            String className = (String)classField.getSelectedItem();
+            String staffid =(String) staffNameField.getSelectedItem();
 
-            if (addStudent(studentId, studentName, className)) {
+            if (addStudent(studentId, studentName, staffid)) {
                 JOptionPane.showMessageDialog(this, "Student added successfully!");
                 studentIdField.setText("");
                 studentNameField.setText("");
@@ -191,8 +194,8 @@ public class ManageStudent extends JFrame {
         updateSubmitButton.addActionListener(e -> {
             String studentId = updateIdField.getText().trim();
             String studentName = updateNameField.getText().trim();
-            String className =(String) updateClassField.getSelectedItem();
-            if (updateStudent(studentId, studentName, className)) {
+            String staffname =updateStaffNameField.getSelectedItem().toString();
+            if (updateStudent(studentId, studentName, staffname)) {
                 JOptionPane.showMessageDialog(this, "Student updated successfully!");
                 updateIdField.setText("");
                 updateNameField.setText("");
@@ -205,22 +208,48 @@ public class ManageStudent extends JFrame {
         setVisible(true);
     }
 
-    private void loadStudents() {
-        tableModel.setRowCount(0); // Clear existing rows
-        String query = "SELECT s.studentid, s.studentname, s.class, st.staffname " +
-                       "FROM students s " +
-                       "JOIN staff st ON s.class = st.class";
+    private void staffnamelist() {
+        // SQL Query to fetch names from the staff table
+        String query = "SELECT name FROM staff";
 
+        // Use try-with-resources for auto-closing connections
         try (Connection con = DBConnect.getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            // Initialize or ensure `stafflist` exists
+            if (stafflist == null) {
+                stafflist = new ArrayList<>();
+            }
+
+            // Loop through the result set and add each name to the list
+            while (rs.next()) {
+                stafflist.add(rs.getString("name"));
+            }
+
+        } catch (SQLException e) {
+            // Print the exception stack trace for debugging
+            e.printStackTrace();
+        }
+    }
+
+
+	private void loadStudents() {
+        tableModel.setRowCount(0); // Clear existing rows
+        String query = "SELECT * FROM students";
+
+        try (//Connection con = DBConnect.getConnection();
+        		Connection con=DBConnect.getConnection();
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
                 tableModel.addRow(new Object[] {
-                    rs.getString("studentid"),
-                    rs.getString("studentname"),
-                    rs.getString("class"),
-                    rs.getString("staffname")
+                    rs.getString("stud_id"),
+                    rs.getString("name"),
+                    rs.getString("staff_id"),
+                    rs.getString("no_of_leave_days")
+                    
                 });
             }
         } catch (SQLException e) {
@@ -229,14 +258,34 @@ public class ManageStudent extends JFrame {
         }
     }
 
-    private boolean addStudent(String studentId, String studentName, String staffId) {
-        String query = "INSERT INTO students(studentid, studentname, staffId) VALUES(?, ?, ?)";
+    private boolean addStudent(String studentId, String studentName, String staffid)
+    {
+    	String staff_id = null;
+    	String staff_name=staffNameField.getSelectedItem().toString();
+    	String query1="SELECT staff_id FROM staff WHERE name=?";
+    	try (Connection con = DBConnect.getConnection();
+    			PreparedStatement pstmt = con.prepareStatement(query1))
+   	 {
+
+           // Set the value for the WHERE condition
+           pstmt.setString(1, staff_name);
+           try (ResultSet rs = pstmt.executeQuery()) {
+               // Check if a result exists
+               if (rs.next()) {
+                   // Retrieve the value of the `name` column
+                   staff_id = rs.getString("staff_id");
+               }
+           }
+    	}
+    	catch(SQLException e)
+    	{e.printStackTrace();}
+        String query = "INSERT INTO students(stud_id, name, staff_id) VALUES(?, ?, ?)";
         try (Connection con = DBConnect.getConnection();
              PreparedStatement pstmt = con.prepareStatement(query)) {
 
             pstmt.setString(1, studentId);
             pstmt.setString(2, studentName);
-            pstmt.setString(3, staffId);
+            pstmt.setString(3, staff_id);
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -247,7 +296,7 @@ public class ManageStudent extends JFrame {
     }
 
     private boolean deleteStudent(String studentId) {
-        String query = "DELETE FROM students WHERE studentid = ?";
+        String query = "DELETE FROM students WHERE stud_id = ?";
         try (Connection con = DBConnect.getConnection();
              PreparedStatement pstmt = con.prepareStatement(query)) {
 
@@ -261,13 +310,33 @@ public class ManageStudent extends JFrame {
         }
     }
 
-    private boolean updateStudent(String studentId, String studentName, String className) {
-        String query = "UPDATE students SET studentname = ?, class = ? WHERE studentid = ?";
+    private boolean updateStudent(String studentId, String studentName, String staff_name) {
+    	String staff_id = null;
+    	String query1="SELECT staff_id FROM staff WHERE name=?";
+    	 try (Connection con = DBConnect.getConnection();
+    			PreparedStatement pstmt = con.prepareStatement(query1))
+    	 {
+
+            // Set the value for the WHERE condition
+            pstmt.setString(1, staff_name);
+
+            // Execute the query
+            try (ResultSet rs = pstmt.executeQuery()) {
+                // Check if a result exists
+                if (rs.next()) {
+                    // Retrieve the value of the `name` column
+                    staff_id = rs.getString("staff_id");
+                }
+            }
+    	 }
+    	catch(SQLException e)
+    	{e.printStackTrace();}
+        String query = "UPDATE students SET name = ?, staff_id = ? WHERE stud_id = ?";
         try (Connection con = DBConnect.getConnection();
              PreparedStatement pstmt = con.prepareStatement(query)) {
 
             pstmt.setString(1, studentName);
-            pstmt.setString(2, className);
+            pstmt.setString(2, staff_id);
             pstmt.setString(3, studentId);
             pstmt.executeUpdate();
             return true;
@@ -278,7 +347,7 @@ public class ManageStudent extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        new ManageStudent();
-    }
+//    public static void main(String[] args) {
+//        new ManageStudent();
+//    }
 }

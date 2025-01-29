@@ -266,7 +266,7 @@ public class ManageClass extends JFrame {
 		}
 	}
 
-	public static void main(String[] args) {
-		new ManageClass();
-	}
+//	public static void main(String[] args) {
+//		new ManageClass();
+//	}
 }

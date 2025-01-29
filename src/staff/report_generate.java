@@ -1,6 +1,7 @@
 package staff;
 
 import javax.swing.*;
+import database.DBConnect;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.Vector;
@@ -21,14 +22,10 @@ class report_generate{
 	        model.addColumn("Total Absent Days");
 	        try 
 	        { 
-	        
-	        String url = "jdbc:mysql://localhost:3306/details";  
-	        String user = "root";  
-	        String password = "muthu@123";  
 	        String query = "SELECT staff_id, name, stud_id, no_of_leave_days FROM students where staff_id=?";
 
 	        
-	             Connection conn = DriverManager.getConnection(url, user, password);
+	             Connection conn = DBConnect.getConnection();
 	         	
 	             PreparedStatement stmt = conn.prepareStatement(query);
 	             stmt.setString(1, staffid);

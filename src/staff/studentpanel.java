@@ -1,6 +1,7 @@
 package staff;
 
 import javax.swing.*;
+import database.DBConnect;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
@@ -19,11 +20,6 @@ import java.sql.*;
     private JLabel label1;
     private JLabel label2;
     private JLabel studentInfoLabel;
-
-    // MySQL Database connection details
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/details"; // Your DB URL
-    private static final String DB_USER = "root";  // Your DB username
-    private static final String DB_PASS = "muthu@123";  // Your DB password
 
      studentpanel() {
         setTitle("Login Task");
@@ -93,7 +89,7 @@ import java.sql.*;
         ResultSet rs = null;
         try {
             // Connect to MySQL Database
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+            connection = DBConnect.getConnection();
 
             // SQL query to find student with the given username and password
             String query = "SELECT * FROM students WHERE stud_id = ? AND name = ?";
@@ -127,7 +123,7 @@ import java.sql.*;
         ResultSet rs = null;
         try {
             // Connect to MySQL Database
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+            connection = DBConnect.getConnection();
 
             // SQL query to fetch student details by username (stud_id)
             String query = "SELECT stud_id, name, no_of_leave_days FROM students WHERE stud_id = ?";
@@ -166,12 +162,7 @@ class LeaveRequestForm extends JFrame {
     private JTextField otherReasonField;
     private JButton submitButton;
     private String studentId, studentName;
-    private String staffId; // Add staffId to hold staff ID
-
-    // MySQL Database connection details
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/details"; // Your DB URL
-    private static final String DB_USER = "root";  // Your DB username
-    private static final String DB_PASS = "root";  // Your DB password
+    private String staffId;
 
     public LeaveRequestForm(String studentId) {
         this.studentId = studentId;
@@ -270,7 +261,7 @@ class LeaveRequestForm extends JFrame {
         ResultSet rs = null;
         try {
             // Connect to MySQL Database
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+            connection = DBConnect.getConnection();
 
             // SQL query to fetch student details by username (stud_id)
             String query = "SELECT stud_id, name, staff_id FROM students WHERE stud_id = ?";
@@ -330,7 +321,7 @@ class LeaveRequestForm extends JFrame {
         boolean success = false;
         try {
             // Connect to MySQL Database
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+            connection = DBConnect.getConnection();
 
             // Convert the leaveDate string to java.sql.Date
             java.sql.Date sqlDate = convertStringToSqlDate(leaveDate);
@@ -408,7 +399,7 @@ class LeaveRequestForm extends JFrame {
         ResultSet rs = null;
         try {
             // Connect to MySQL Database
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+            connection = DBConnect.getConnection();
 
             // Query to get the current number of leave days
             String query = "SELECT no_of_leave_days FROM students WHERE stud_id = ?";

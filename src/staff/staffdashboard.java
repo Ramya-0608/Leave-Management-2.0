@@ -8,14 +8,14 @@ import java.sql.SQLException;
 import javax.swing.*;
 
 import javax.swing.JOptionPane;
-
+import database.DBConnect;
 
 public class staffdashboard {
 	String staffid;
 	private static boolean hasnewrequests(String sid) {
 		 boolean hasrequests=false;
 		  try {
-			  Connection cn=DriverManager.getConnection("jdbc:mysql://localhost:3306/details","root","muthu@123");
+			  Connection cn=DBConnect.getConnection();
 			  String q="SELECT count(*) FROM requests WHERE staff_id=? AND is_viewed=FALSE";
 			  PreparedStatement pt=cn.prepareStatement(q);
 			  pt.setString(1, sid);
