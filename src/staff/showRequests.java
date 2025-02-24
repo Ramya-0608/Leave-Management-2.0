@@ -3,6 +3,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import database.DBConnect;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -16,7 +18,7 @@ public class showRequests extends JFrame {
 	public static  Connection Connect() {
 		Connection cn=null;
 		try {
-		cn=DriverManager.getConnection("jdbc:mysql://localhost:3306/details","root","muthu@123");
+		cn=DBConnect.getConnection();
 	}catch(SQLException e) {
 		e.printStackTrace();
 	}

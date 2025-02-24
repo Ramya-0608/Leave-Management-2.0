@@ -238,7 +238,7 @@ public class ManageStudent extends JFrame {
         tableModel.setRowCount(0); // Clear existing rows
         String query = "SELECT * FROM students";
 
-        try (//Connection con = DBConnect.getConnection();
+        try (//Connection con = DBConnect.getConnection()
         		Connection con=DBConnect.getConnection();
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {

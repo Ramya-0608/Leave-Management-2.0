@@ -3,6 +3,8 @@ package staff;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import database.DBConnect;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -17,7 +19,7 @@ public class showAllRequests extends JFrame {
 		List<Object[]> requests = new ArrayList<>();
 
 		String query = "SELECT sno,stu_id,name,leave_date,reason from requests WHERE staff_id=? and leave_date=?";
-		try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/details", "root", "muthu@123")) {
+		try (Connection con = DBConnect.getConnection()) {
 			PreparedStatement stmt = con.prepareStatement(query);
 			stmt.setString(1, staffid);
 			stmt.setString(2, date);
