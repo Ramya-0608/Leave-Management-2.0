@@ -69,17 +69,19 @@ public class staffdashboard {
         });
         
         logoutMenu.addActionListener(e->{
-        	new dashboard();
         	frame2.dispose();
+        	new dashboard();
+        	
         });
         
         requestStatusMenu.addActionListener(e->{
-        	new showRequestStatus(id);
+        	new showRequestStatus(id,this.name);
         	frame2.dispose();
         });
         
         requestLeaveMenu.addActionListener(e->{
         	new staffLeaveRequestForm(this.name,staffid);
+        	frame2.dispose();
         });
         
 

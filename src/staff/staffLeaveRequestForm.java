@@ -3,12 +3,15 @@ package staff;
 
 import javax.swing.*;
 
+import com.mysql.cj.protocol.Resultset;
+
 import database.DBConnect;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
@@ -65,7 +68,7 @@ import java.time.LocalDate;
             if (!otherReasonField.getText().trim().isEmpty()) reason += otherReasonField.getText().trim();
 
             if (!reason.isEmpty()) {
-                submitLeaveRequest(password,username, leaveDate, reason);
+                submitLeaveRequest(id,name, leaveDate, reason);
                // Redirect to login after submitting leave request
             } 
         });
@@ -76,12 +79,12 @@ import java.time.LocalDate;
     private void submitLeaveRequest(String password,String username, String leaveDate, String reason) {
         // Insert a new leave request into the leave_requests table
         String insertLeaveRequestQuery = "INSERT INTO staff_requests (staff_id,name,leave_date,reason) VALUES (?, ?, ?,?)";
-        // Update the leave count in the staff table (increment by 1)
-        String updateLeaveCountQuery = "UPDATE staff SET leave_count = leave_count + 1 WHERE staff_id= ?";
+        
+        
 
         try (Connection con = DBConnect.getConnection();
              PreparedStatement pstmtInsert = con.prepareStatement(insertLeaveRequestQuery);
-             PreparedStatement pstmtUpdate = con.prepareStatement(updateLeaveCountQuery)) {
+             ) {
 
             // Insert the leave request into the leave_requests table
         	pstmtInsert.setString(1,password);
@@ -89,10 +92,10 @@ import java.time.LocalDate;
             pstmtInsert.setString(3, leaveDate);
             pstmtInsert.setString(4, reason);
             int i=pstmtInsert.executeUpdate();
-            pstmtUpdate.setString(1,password);
-            int j=pstmtUpdate.executeUpdate();
+           
             
-            if(i>0&&j>0) {
+            
+            if(i>0) {
             	  JOptionPane.showMessageDialog(null, "Leave Request Submitted Successfully");
             	  frame.dispose();
                   new staffdashboard(username,password);
@@ -101,8 +104,7 @@ import java.time.LocalDate;
                 JOptionPane.showMessageDialog(null, "Please select or enter a reason", "Error", JOptionPane.ERROR_MESSAGE);
             }
            
-            // Increment the leave count by 1 in the staff table
-           // This increments the leave count by 1 for the specific user
+           
 
         } catch (SQLException e) {
             e.printStackTrace();

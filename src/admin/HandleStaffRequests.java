@@ -42,11 +42,11 @@ public class HandleStaffRequests extends JFrame {
         return requests;
     }
 
-    public static void markRequest(int requestid, String response) {
+    public static void markRequest(int requestid) {
         String updatequery = "UPDATE staff_requests SET is_viewed=TRUE , response=? WHERE request_id=?";
         try (Connection con = DBConnect.getConnection()) {
             PreparedStatement stmt = con.prepareStatement(updatequery);
-            stmt.setString(1, response);
+            stmt.setString(1,"Accepted");
             stmt.setInt(2, requestid);
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -69,9 +69,10 @@ public class HandleStaffRequests extends JFrame {
         showMonthwiseRequestsButton = new JButton("Show Monthwise Requests");
 
         // Add back button and other buttons to the panel
-        buttonPanel.add(backButton); // Add back button first to align it at the top-right
+       
         buttonPanel.add(showNewRequestsButton);
         buttonPanel.add(showMonthwiseRequestsButton);
+        buttonPanel.add(backButton);
 
         // Content panel
         contentPanel = new JPanel(new CardLayout());
@@ -127,7 +128,7 @@ public class HandleStaffRequests extends JFrame {
         // Add a listener to update the table when a new month is selected
         monthComboBox.addActionListener(e -> loadMonthwiseRequests((String) monthComboBox.getSelectedItem()));
 
-        // Add action for Back button to return to "New Requests" page
+       
         
 
         setVisible(true);
@@ -199,13 +200,13 @@ public class HandleStaffRequests extends JFrame {
 
                 if (col == 6) {  // Accept button clicked
                     int requestId = (Integer) table.getValueAt(row, 0);
-                    markRequest(requestId, "Accepted");
+                    markRequest(requestId);
                     ((DefaultTableModel) table.getModel()).removeRow(row);
                 }
 
                 if (col == 7) {  // Reject button clicked
                     int requestId = (Integer) table.getValueAt(row, 0);
-                    markRequest(requestId, "Rejected");
+                    markRequest(requestId);
 
                     // Switch to the rejection response card layout
                     showRejectionCard(requestId, row);
@@ -320,7 +321,7 @@ public class HandleStaffRequests extends JFrame {
         String updateQuery = "UPDATE staff_requests SET response=? WHERE request_id=?";
         try (Connection con = DBConnect.getConnection()) {
             PreparedStatement stmt = con.prepareStatement(updateQuery);
-            stmt.setString(1, rejectionResponse);
+            stmt.setString(1,"Rejected: "+ rejectionResponse);
             stmt.setInt(2, requestId);
             stmt.executeUpdate();
         } catch (SQLException e) {

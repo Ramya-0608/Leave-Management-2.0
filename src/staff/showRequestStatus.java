@@ -9,7 +9,7 @@ import database.DBConnect;
 public class showRequestStatus extends JFrame {
     private String staffid;
 
-    public showRequestStatus(String staffid) {
+    public showRequestStatus(String staffid,String name) {
         this.staffid = staffid;
         setTitle("Request Status");
         setSize(800, 600);
@@ -26,7 +26,8 @@ public class showRequestStatus extends JFrame {
         backButton.setForeground(Color.WHITE);
         backButton.setFont(new Font("Arial", Font.BOLD, 12));
         backButton.addActionListener(e -> {
-            dispose();  // Close this frame and return to the previous screen
+            dispose();
+            new staffdashboard(staffid,name);// Close this frame and return to the previous screen
         });
         JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         backButtonPanel.add(backButton);
